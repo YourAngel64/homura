@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import "./style.css"
 import App from './App';
+import UserSign from "./User_Sign"
 import Prueba from "./Prueba"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <UserSign />
   </React.StrictMode>
 );
 
