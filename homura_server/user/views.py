@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 # Forms:
 from . import forms
@@ -10,7 +11,6 @@ from .models import UserModel
 
 @api_view(['POST'])
 def getUser(request):
-
     username = ''
 
     if request.method == 'POST':
@@ -27,7 +27,7 @@ def getUser(request):
             except:
                 username = 'null'
 
-    return Response({'username': username})
+        return Response({'username': username})
 
 
 @api_view(['POST'])
@@ -55,5 +55,27 @@ def postUser(request):
             except:
                 print('sorry something wrong with creating User :(')
                 username = 'null'
+
+    return Response({'username': username})
+
+
+@api_view(['POST'])
+def createCookie(request):
+    username = request.POST.get('username')
+    response = HttpResponse()
+
+    if 'username' not in request.COOKIES or username != request.COOKIES.get('username'):
+        response.set_cookie('username', username, max_age=60)
+
+    return response
+
+
+@api_view(['GET'])
+def getCookie(request):
+    username = ''
+    if 'username' in request.COOKIES:
+        username = request.COOKIES.get('username')
+    else:
+        username = 'null'
 
     return Response({'username': username})

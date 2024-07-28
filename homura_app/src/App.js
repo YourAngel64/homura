@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import get_CSRFToken from './csrf_token';
-import axios from "axios"
 import userPost from './user';
+import { setCookie, getCookie } from './cookie.js';
 
 function App() {
   const [csrf_token, setToken] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const [cookie, setcookie] = useState('')
 
   useEffect(() => {
     const fetch_data = async () => {
@@ -35,11 +36,24 @@ function App() {
       setUsername(result.username)
       setEmail('')
       setPassword('')
+
+      await setCookie({ 'username': result.username }, e)
     }
     catch (error) {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+
+    const get_cookie = async () => {
+      const results = await getCookie()
+      setcookie(results.username)
+    }
+
+    get_cookie()
+  }, [])
+
 
   return (
     <>
@@ -65,6 +79,7 @@ function App() {
       <br></br>
       <p className='text-center'>{username != 'null' && username != '' ? `Welcome ${username}!` : ''}</p>
       <p className='text-center'>{username == 'null' ? 'User not found' : ''}</p>
+      <p>{cookie}</p>
     </>
   );
 }
