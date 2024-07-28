@@ -1,5 +1,7 @@
 import axios from "axios"
+import React, { useState, useEffect } from "react"
 
+//TODO - FETCH DATA FROM HERE U STUPID MONKEY
 async function get_CSRFToken() {
   let csrf_token;
 

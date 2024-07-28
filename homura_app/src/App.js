@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import get_CSRFToken from './csrf_token';
 import axios from "axios"
+import userPost from './user';
 
 function App() {
   const [csrf_token, setToken] = useState('')
@@ -23,29 +24,22 @@ function App() {
     fetch_data()
   }, [])
 
-  const postUser = (e) => {
-    if (csrf_token != 'null') {
-      axios.post('http://localhost:8000/user/get/', {
-        'email': email,
-        'password': password
-      }, {
-        headers: {
-          "X-CSRFToken": csrf_token,
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
-      }).then((result) => {
-        setUsername(result.data.username)
-        setEmail('')
-        setPassword('')
-      }).catch((error) => {
-        console.log(error);
-      })
+  const postUser = async (e) => {
+    try {
+      const result = await userPost("http://localhost:8000/user/get/", {
+        "email": email,
+        "password": password
+      }, csrf_token, e);
 
-
+      console.log(result)
+      setUsername(result.username)
+      setEmail('')
+      setPassword('')
     }
-
-    e.preventDefault();
-  };
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>

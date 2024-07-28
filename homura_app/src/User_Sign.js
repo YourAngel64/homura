@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import get_CSRFToken from "./csrf_token"
+import userPost from "./user"
 import axios from "axios"
 
 function UserSign() {
@@ -24,27 +25,22 @@ function UserSign() {
     parse_token()
   }, [])
 
-  const postUser = (e) => {
-    axios.post("http://localhost:8000/user/post/", {
-      "email": email,
-      "password": password,
-      "username": username
-    }, {
-      headers: {
-        "X-CSRFToken": csrf_token,
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    }).then((results) => {
-      console.log(results)
+  const postUser = async (e) => {
+    try {
+      await userPost("http://localhost:8000/user/post/",
+        {
+          "email": email,
+          "password": password,
+          "username": username
+        }, csrf_token, e);
+
       setUsername('')
       setPassword('')
       setEmail('')
-    }).catch((error) => {
-      console.log(error)
-      setUsername("null")
-    })
 
-    e.preventDefault()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
