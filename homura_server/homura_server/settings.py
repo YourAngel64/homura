@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8ju0=6+@*_%oxkr_j7z^$b33x8#0s!+@d(s-wcbt7z#fi+%njb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -64,7 +64,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000"
 ]
-
+CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'homura_server.urls'
 
 TEMPLATES = [
