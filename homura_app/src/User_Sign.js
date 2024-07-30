@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import get_CSRFToken from "./csrf_token"
-import userPost from "./user"
+import { userPost } from "./user"
 import axios from "axios"
 
 function UserSign() {
