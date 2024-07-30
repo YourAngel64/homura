@@ -65,7 +65,7 @@ def createCookie(request):
     response = HttpResponse()
 
     if 'username' not in request.COOKIES or username != request.COOKIES.get('username'):
-        response.set_cookie('username', username, max_age=60)
+        response.set_cookie('username', username, max_age=1*24*60*60)
 
     return response
 

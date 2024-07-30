@@ -20,4 +20,22 @@ const userPost = async (url, data, csrf_token, e) => {
 
 }
 
-export default userPost
+// do userGet function
+const userGet = async (url, csrf_token, e) => {
+  e.preventDefault()
+
+  try {
+
+    const results = await axios.get(url,
+      {
+        "X-CSRFToken": csrf_token,
+      })
+
+    return results.data
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+
+export { userPost, userGet }
