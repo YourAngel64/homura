@@ -9,10 +9,12 @@ from . import forms
 from .models import UserModel
 
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def getUser(request):
     username = ''
 
+    # POST = Login
+    # GET = cookie is available
     if request.method == 'POST':
         login_form = forms.UserLoginForm(request.POST)
         if login_form.is_valid():
@@ -26,6 +28,20 @@ def getUser(request):
                 username = user.username
             except:
                 username = 'null'
+    elif request.method == 'GET':
+        username = request.COOKIES.get('username')
+        try:
+            user = UserModel.objects.filter(username=username).get()
+
+            context = {
+                'username': user.username,
+                'pfp': user.pfp or 'null'
+            }
+
+            return Response(context)
+        except:
+            print('no se pudo')
+            username = 'null'
 
         return Response({'username': username})
 

@@ -21,14 +21,16 @@ const userPost = async (url, data, csrf_token, e) => {
 }
 
 // do userGet function
-const userGet = async (url, csrf_token, e) => {
-  e.preventDefault()
+const userGet = async (url, csrf_token) => {
 
   try {
 
     const results = await axios.get(url,
       {
-        "X-CSRFToken": csrf_token,
+        headers: {
+          "X-CSRFToken": csrf_token,
+        },
+        withCredentials: true,
       })
 
     return results.data
