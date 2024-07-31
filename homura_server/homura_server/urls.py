@@ -22,5 +22,5 @@ urlpatterns = [
     path('api/', include('test.urls')),
     path('user', include('user.urls')),
     path('csrf_token', include('csrf_token.urls')),
-    path('message', include('message.urls'))
+    path('message', include('message.urls')),
 ]
