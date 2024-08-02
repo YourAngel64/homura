@@ -1,3 +1,4 @@
+from threading import ExceptHookArgs
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -11,18 +12,15 @@ from . import models
 @api_view(['POST'])
 def postChat(request):
     if request.method == 'POST':
-        try:
-            print(request.POST)
-            chat_form = forms.CreateChat(request.POST)
-
-            if chat_form.is_valid():
-
-                print(chat_form.clean())
-                chat_name = chat_form.cleaned_data['chat_name']
-                users = chat_form.cleaned_data['users']
-                users_admin = chat_form.cleaned_data['users_admin']
-                description = chat_form.cleaned_data['description']
-                unique_id = chat_form.cleaned_data['unique_id']
+        chat = forms.CreateChat(request.POST)
+        if chat.is_valid():
+            try:
+                # users and users_admin are arrays therefore they get special treatment :3
+                chat_name = chat.cleaned_data['chat_name']
+                users = request.POST.getlist('users[]')
+                users_admin = request.POST.getlist('users_admin[]')
+                description = chat.cleaned_data['description']
+                unique_id = chat.cleaned_data['unique_id']
 
                 chat_model = models.Chat(
                     chat_name=chat_name,
@@ -34,9 +32,11 @@ def postChat(request):
 
                 chat_model.save()
                 return Response({'status': 'success'})
-        except Exception as er:
-            print(er)
-            return Response({'status': 'fail'})
+            except Exception as err:
+                print(err)
+                return Response({'status': 'fail'})
+
+    return Response({'status': 'aqui'})
 
 
 @api_view(['GET'])
@@ -46,7 +46,13 @@ def getChat(request):
         try:
             username = request.COOKIES.get('username')
             chat_list = models.Chat.objects.filter(
-                username=username).get('chat_name')
-            return Response({'chats': chat_list})
-        except:
-            return Response({'chats': 'null'})
+                users__contains=[username]).all().values()
+
+            chat_array = []
+            for chat in chat_list:
+                chat_array.append(chat.get('unique_id'))
+
+            return Response(chat_array)
+        except Exception as err:
+            print(err)
+            return Response([])
