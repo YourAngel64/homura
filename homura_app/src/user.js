@@ -8,7 +8,8 @@ const userPost = async (url, data, csrf_token, e) => {
       headers: {
         "X-CSRFToken": csrf_token,
         "Content-Type": "application/x-www-form-urlencoded"
-      }
+      },
+      withCredentials: true,
     })
 
     return results.data

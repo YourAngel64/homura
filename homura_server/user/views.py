@@ -26,6 +26,7 @@ def getUser(request):
                     email=login_email, password=login_password).get()
 
                 username = user.username
+                return Response({'username': username})
             except:
                 username = 'null'
     elif request.method == 'GET':
