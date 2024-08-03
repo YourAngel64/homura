@@ -1,4 +1,3 @@
-from threading import ExceptHookArgs
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -36,7 +35,7 @@ def postChat(request):
                 print(err)
                 return Response({'status': 'fail'})
 
-    return Response({'status': 'aqui'})
+    return Response({'status': 'null'})
 
 
 @api_view(['GET'])
@@ -48,11 +47,18 @@ def getChat(request):
             chat_list = models.Chat.objects.filter(
                 users__contains=[username]).all().values()
 
-            chat_array = []
+            chat_dictionary_array = []
+            i = 0
             for chat in chat_list:
-                chat_array.append(chat.get('unique_id'))
+                chat_dictionary_array.append({
+                    'id': i,
+                    'chat_name': chat.get('chat_name'),
+                    'description': chat.get('description'),
+                    'unique_id': chat.get('unique_id')
+                })
+                i += 1
 
-            return Response(chat_array)
+            return Response(chat_dictionary_array)
         except Exception as err:
             print(err)
             return Response([])
