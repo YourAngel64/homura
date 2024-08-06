@@ -12,5 +12,4 @@ class CreateChat(forms.Form):
 
 class CreateMessage(forms.Form):
     message = forms.CharField(max_length=500)
-    user = forms.CharField(max_length=255)
-    chat = forms.CharField(max_length=255)
+    username = forms.CharField(max_length=255)
