@@ -23,4 +23,5 @@ urlpatterns = [
     path('user', include('user.urls')),
     path('csrf_token', include('csrf_token.urls')),
     path('message', include('message.urls')),
+    path('cookie', include('cookie.urls')),
 ]

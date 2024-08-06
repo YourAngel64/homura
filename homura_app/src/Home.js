@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { userGet, userPost } from "./user.js"
 import get_CSRFToken from "./csrf_token";
+import { deleteCookie, postCookie } from "./cookie.js";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [username, setUsername] = useState('')
@@ -10,7 +12,6 @@ const Home = () => {
   const [chat_name, setChatName] = useState('')
   const [chat_description, setChatDescription] = useState('')
   const [chat_list, setChatList] = useState([])
-  const [chat_id, setChatID] = useState('')
 
   //fetchToken
   useEffect(() => {
@@ -65,18 +66,36 @@ const Home = () => {
     }
 
     getChats()
+    //detele chat id cookie
+    deleteCookie('chat_id')
   }, [])
 
   //render every chat maping every dictionayr entry from the array that BE sent
-  const showChats = () => {
-    return chat_list.map((value) =>
-      <>
-        <p>{value.id}</p>
-        <p>Chat Name: {value.chat_name}</p>
-        <p>Description: {value.description}</p>
-        <br />
-      </>
-    )
+  const ShowChats = () => {
+
+    //use navigation
+    const navigate = useNavigate()
+    const navigate_url = () => {
+      navigate('/chat')
+    }
+
+    return chat_list.map((value) => {
+      //create cookie with chat id
+      const set_id = async () => {
+        await postCookie('chat_id', { 'chat_id': value.unique_id })
+      }
+
+      return (
+        <>
+          <p>{value.id}</p>
+          <p> Chat Name: {value.chat_name}</p>
+          <p>Description: {value.description}</p>
+          <button onClick={async function open() { await set_id(); navigate_url(); }}>Open Chat</button>
+          <br />
+          <br />
+        </>
+      )
+    })
   }
 
   return (
@@ -88,7 +107,7 @@ const Home = () => {
       <br />
       <h1>Chats:</h1>
       <br />
-      <p>{showChats()}</p>
+      <ShowChats></ShowChats>
       <br />
 
       {/*2nd part - Messaging functions from message backend*/}
@@ -102,8 +121,11 @@ const Home = () => {
         <button type="submit">Submit</button>
         <br />
       </form>
+
+      <br />
     </>
   )
 }
+
 
 export default Home

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import get_CSRFToken from './csrf_token';
 import { userPost } from './user';
-import { setCookie, getCookie } from './cookie.js';
+import { postCookie, getCookie } from './cookie.js';
 import { useNavigate } from 'react-router-dom';
 
 function UserLogin() {
@@ -39,7 +39,8 @@ function UserLogin() {
       setPassword('')
 
       //Set cookie after login
-      await setCookie({ 'username': result.username }, e)
+      console.log(result.username)
+      await postCookie('username', { 'username': result.username })
 
     }
     catch (error) {
@@ -50,7 +51,7 @@ function UserLogin() {
   useEffect(() => {
 
     const get_cookie = async () => {
-      const results = await getCookie()
+      const results = await getCookie('username')
       setcookie(results.username)
     }
 
