@@ -4,6 +4,7 @@ import Home from './Home';
 import UserLogin from './User_Login';
 import UserSign from './User_Sign';
 import { getCookie } from './cookie';
+import Chat from './Chat';
 
 const App = () => {
   const [cookie, setCookie] = useState('')
@@ -11,7 +12,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchCookie = async () => {
-      const result = await getCookie()
+      const result = await getCookie('username')
       console.log(result.username)
       setCookie(result.username)
     }
@@ -33,6 +34,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={checkCookie()}></Route>
           <Route path='/sign-in' element={<UserSign />}></Route>
+          <Route path='/chat' element={<Chat />}></Route>
         </Routes>
       </BrowserRouter>
     </>
