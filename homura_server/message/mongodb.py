@@ -29,17 +29,30 @@ def mongoDisconnect(mongo_client):
 def getMessages(collection):
     mongo_client, mongo_db, mongo_collection = mongoConnect(collection)
 
-    # TODO
+    messages = mongo_collection.find()
+
+    message_array = []
+    for message in messages:
+        message_array.append(message)
 
     mongoDisconnect(mongo_client)
+    return message_array
 
 
-def postMessages(collection):
+def postMessages(collection, message, username):
     mongo_client, mongo_db, mongo_collection = mongoConnect(collection)
 
-    # TODO
-
-    mongoDisconnect(mongo_client)
+    try:
+        mongo_collection.insert_one({
+            'username': username,
+            'message': message
+        })
+        mongoDisconnect(mongo_client)
+        return {'staus': 'message posted!'}
+    except Exception as ex:
+        print(ex)
+        mongoDisconnect(mongo_client)
+        return {'status': 'failed'}
 
 
 def deleteMessages(collection):

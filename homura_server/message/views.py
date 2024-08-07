@@ -1,11 +1,15 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import json
 
 # Forms
 from . import forms
 
 # Models
 from . import models
+
+# MongoDB
+from . import mongodb
 
 
 @api_view(['POST'])
@@ -62,3 +66,61 @@ def getChat(request):
         except Exception as err:
             print(err)
             return Response([])
+
+
+@api_view(['GET'])
+def getChatInfo(request, chat_id):
+    try:
+        chat = models.Chat.objects.filter(unique_id=chat_id).get()
+        info = {
+            'chat_name': chat.chat_name
+        }
+
+        return Response(info)
+
+    except Exception as ex:
+        print(ex)
+        return Response({})
+
+
+@api_view(['GET'])
+def getMessages(request, chat_id):
+    try:
+        messages = mongodb.getMessages(chat_id)
+
+        message_array = []
+        for message in messages:
+            message_dic = {
+                'username': message['username'],
+                'message': message['message']
+            }
+
+            message_array.append(message_dic)
+
+        data = {
+            'status': 'ola',
+            'messages': message_array
+        }
+        return Response(data)
+
+    except Exception as err:
+        print(f"this is it: {err}")
+
+    return Response({"status": "kys"})
+
+
+@ api_view(['POST'])
+def postMessages(request, chat_id):
+    if request.method == 'POST':
+        message_form = forms.CreateMessage(request.POST)
+        if message_form.is_valid():
+            try:
+                message = message_form.cleaned_data['message']
+                username = message_form.cleaned_data['username']
+
+                status = mongodb.postMessages(chat_id, message, username)
+                return Response(status)
+
+            except Exception as err:
+                print(err)
+                return Response({'status': 'failed'})
