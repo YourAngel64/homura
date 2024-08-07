@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { getCookie } from "./cookie"
 import { userPost, userGet } from "./user.js"
 import get_CSRFToken from "./csrf_token.js"
+import { useNavigate } from "react-router-dom"
 
 const Chat = () => {
   const [chat_id, setChatID] = useState('')
@@ -10,6 +11,7 @@ const Chat = () => {
   const [username, setUsername] = useState('')
   const [chat_name, setChatName] = useState('')
   const [message_array, setMessageArray] = useState('')
+  const [add_user, setAddUser] = useState('')
 
   //get cookie (chat id)
   useEffect(() => {
@@ -22,6 +24,16 @@ const Chat = () => {
 
     get_cookie()
   }, [])
+
+
+  //go back home if cookie is not found
+  const GoHome = () => {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+      navigate('/')
+    }, [])
+  }
 
   //get csrf token
   useEffect(() => {
@@ -43,6 +55,19 @@ const Chat = () => {
       get_info();
 
   }, [chat_id, csrf_token])
+
+  //Button to go back home
+  const BackHome = () => {
+    const navigate = useNavigate()
+
+    const onClick = () => {
+      navigate('/')
+    }
+
+    return (
+      <button onClick={onClick}>Go Back Home</button>
+    )
+  }
 
   //get messages
   useEffect(() => {
@@ -87,8 +112,25 @@ const Chat = () => {
     })
   }
 
+  //Add User to chat
+  const addUser = (e) => {
+
+    const add_user = async () => {
+      const results = await userPost(`http://localhost:8000/message/chat/add/${chat_id}`, {
+        'add_user': 'Prueba'
+      }, csrf_token, e)
+
+      console.log(results)
+      console.log(results.user)
+    }
+
+
+    add_user()
+  }
+
   return (
     <>
+      {chat_id == 'null' ? <GoHome></GoHome> : <></>}
       <h1>Welcome {username}!
         <br />  ...to {chat_name}</h1>
       <br />
@@ -102,6 +144,17 @@ const Chat = () => {
           <button type="submit">Send message</button>
         </form>
       </div>
+
+      <br />
+
+      <BackHome></BackHome>
+
+      <br />
+      <br />
+      <hr />
+
+      <input type='text' placeholder="User to add username" value={add_user} onChange={(e) => { setAddUser(e.target.value) }}></input>
+      <button onClick={addUser}>Add User</button>
 
     </>
   )

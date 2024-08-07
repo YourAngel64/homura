@@ -7,6 +7,7 @@ from . import forms
 
 # Models
 from . import models
+from user.models import UserModel
 
 # MongoDB
 from . import mongodb
@@ -81,6 +82,26 @@ def getChatInfo(request, chat_id):
     except Exception as ex:
         print(ex)
         return Response({})
+
+
+@api_view(['POST'])
+def addUser(request, chat_id):
+    add_user = request.POST.get('add_user')
+
+    # Check if user in data base
+    try:
+        user = UserModel.objects.filter(username=add_user).get()
+        chat = models.Chat.objects.filter(unique_id=chat_id).get()
+
+        if user.username not in chat.users:
+            chat.users.append(user.username)
+
+        chat.save()
+
+        return Response({'user': user.username})
+    except Exception as ex:
+        print(ex)
+        return Response({'user': 'null'})
 
 
 @api_view(['GET'])
