@@ -1,0 +1,76 @@
+## START COMMAND
+$ npx create-react-app my-app
+$ npm install -D tailwindcss
+$ npx tailwindcss init
+
+## Axios get and post requests:
+
+for get:
+
+useEffect(() => {
+    axios.get('http://localhost:8000/api/prueba/').then(response => {
+      setUser(response.data.username)
+    }).catch(error => {
+      console.log(error);
+    })
+  }, [])
+
+
+for post:
+function handleSubmit(e) {
+    axios({
+      method: 'post',
+      url: 'http://localhost:8000/api/prueba/post/',
+      data: data,
+      headers: {
+        "X-CSRFToken": token,
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }).then((response) => {
+      setOne(response.data.username);
+      setTwo(response.data.message);
+    })
+      .catch((error) => { console.log(error) })
+
+    e.preventDefault() !!!!!!!! important line
+
+  }
+
+
+## TAILWIND:
+
+- Install packages:
+$ npm install tailwindcss postcss-cli autoprefixer
+
+- Config for tailwind.config.js in root dir:
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+- Config for postcss.config.css in root dir:
+
+module.exports = {
+  plugins: [
+    require('tailwindcss'),
+    require('autoprefixer'),
+  ],
+}
+
+
+- Create style.css in src dir and config for it:
+
+/* src/styles.css */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+

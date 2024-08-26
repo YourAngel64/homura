@@ -1,0 +1,418 @@
+'use / to search'
+n for next N for previous
+## START:
+
+#Create virtual env:
+$ virtualenv -name
+$ source -name/bin/activate = activate virtualenv
+$ deactivate = deactivate virtualenv
+
+# create server and app:
+$ django-adming startproject | startapp -name
+>add apps in settings file, also middleware, template dir, db, staticdir
+
+# manage.py commands:
+$ runserver
+$ createsuperuser
+$ makemigration 
+$ migrate
+$ shell
+$ collectstatic
+
+## VIEWS:
+
+# template for creating view:
+>>
+from django.template import loader
+from django.http import HttpResponse
+from .models import Users
+# Create your views here.
+
+
+def -name(request):
+    data = -modelClassName.objects.all().values()
+    template = loader.get_template("-templatename.html")
+
+    context = {
+        'name': 'Angel',
+        'mydata': data,
+    }
+
+    return HttpResponse(template.render(context, request))
+<<
+
+# template for adding url:
+>>
+from django.urls import path
+
+from -filename import -viewname
+
+urlpatterns = [
+    path("", -viewname),
+    path('admin/', admin.site.urls),
+]
+<<
+
+
+## STATIC
+
+# Template:
+{% load static %}
+{% static 'file.js/cs %'}
+
+# configure:
+$ pip install whitenoise
+
+# add in middleware:
+whitenoise.middleware.WhiteNoiseMiddleware
+
+# add staticroot and staticfiles:
+STATIC_ROOT="staticdir/"
+STATICFILES_DIR = ['static']
+
+#run everytime new static file is added:
+$ manage.py collectstatic
+
+!! EVERYTIME NEW STATIC FILES ARE ADDED NEED TO RESTART SERVER
+
+## MODELS, SQL DATA QUERIES:
+
+#create template:
+>>
+class -name(models.Model): 
+  ...datafields
+<<
+
+#Query list for pass data to template:
+
+#main to follow:
+-classname.objects
+
+#list
+
+$ .values() = returns data in dictionary
+$ .values_list(coloumnname) = return data from 1 coloumnname
+$ .filter(filters) = filters 
+> use , for more than 1 filter or Q syntax for OR:
+ex: .filter(Q(filter) | Q(filter))
+>syntax for field look up:
+-fieldname__-fieldfiltername
+ex: .filter(fistname__startswith='L')
+
+$ order_by() = orders data in acendint
+> for desending order use '-' before field name
+
+
+## USE SHELL TO MODIFY DATA:
+
+# init code:
+from -filename import -classname
+
+# see data:
+$ classname.objects.all().values()
+
+# create data:
+$ newmember = -classname(fieldsdata)
+$ newmember.save()
+
+# get data:
+$ user = UserModel.objects.filter(username=username).get()
+$ user_pfp = user.pfp
+
+#  update data:
+$   user.pfp = new_pfp
+$   user.save()
+
+# delete data
+$ .delete()
+
+
+## MASTER Template
+
+in master use blocks:
+ex: {% block -name %} {% endblock %}
+
+then in other html (no need html5 layout if master has already):
+{% extends "master.html" %}
+then just fill the blocks :)
+
+
+## Dynamic url
+
+# in path:
+path("details/<int:id>")
+
+# in view (pass in as arg):
+def details(request, id)
+
+sudo -u postgres psql
+
+## USE POSTGRE SQL AS MAIN DB
+
+- First config postgre db on any machine u wish to save the data in
+
+# IMPLEMENTING POSTGRE WITH DJANGO:
+
+-Install psycopg2-binary pkg
+
+$ pip install psycopg2-binary
+
+# CODE IN configure
+
+code for config:
+{
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'homura',
+        'USER': 'enten',
+        'PASSWORD': '3004Angel',
+        'HOST': 'localhost',
+        'PORT': '5432'
+    }
+}
+
+}
+
+! - Make sure postgre server is on and dont forget the 
+$ makemigrations
+$ migrate
+- commands
+
+
+## FORM AND DATA PROCESSSING
+
+# Import it from the standard django library:
+
+$ from django import forms
+
+# CREATE FORM:
+- Now create the class with all the fields the forms are having:
+
+{
+
+class UserForm(forms.Form):
+  username = forms.CharField(max_length=255)
+  email = forms.CharField(max_length=255)
+  password = forms.CharField(max_length=255)
+  ...
+
+}
+
+
+# Front End/html
+- in the html file works as any other form but DONT FORGET KEY:
+- and also to put the name and id the same as the corresponding field from the form class 
+  previously created
+
+    <form action="/post" method="post">
+      KEYYYYYYYYYY-  {% csrf_token %}
+      <input type="text" name="username" id="username" placeholder="username">
+      <br>
+      <input type="text" name="email" id="email" placeholder="email">
+      <br>
+      <input type="password" name="password" id="password" placeholder="password">
+      <br>
+      <input type="text" name="firstname" id="firstname" placeholder="firstname">
+      <br>
+      <input type="text" name="lastname" id="lastname" placeholder="lastname">
+      <br>
+      <button type="submit">Create account</button>
+    </form>
+
+
+# USE FORM DATA
+
+- in order to use this data to either display it or save it into db we
+  will write all this code in the views:
+
+  - first create variable with POST info 
+
+    $ myloginForm = UserForm(request.POST)
+
+    -request.POST contains all the corresponding fields and data for the form
+
+    check if form is valid:
+
+    $ if myloginForm.is_valid():
+
+    -now we use this method to get any piece of data from the form:
+
+    $ myloginForm.cleaned_data['field that we want to get']
+
+
+## FILE/PICTURE UPLOADING
+
+$ pip install Pillow
+- Just make sure form fields are the correct type:
+
+  class PfpForm(forms.Form):
+    pfp_username = forms.CharField(max_length=255)
+    pfp = forms.ImageField()
+
+!! DONT FORGET ALSO ON THE DB MODELS TO UPDATE IT
+- Now we use request.POST to get information. for files is request.FILES
+  
+  $ pfp = PfpForm(request.POST, request.FILES)
+
+-Finally just treat it like a normal post info and thats it. do whatever u want :D
+
+## MONGO DB WITH DJANGO
+
+# Configuring dotenv 
+
+- Install dotenv pip
+
+$pip install python-dotenv
+
+-now configure it
+
+{
+from dotenv import load_dotenv
+load_dotenv('path')
+}
+
+- Finally use environ to get the env variable:
+
+
+$ os.environ.get(var name)
+
+
+# configure and use mongdb
+
+-install lib
+
+$pip install pymongo
+
+- connect to server:
+
+$ import  pymongo
+$ mongo_client = pymongo.MongoClient(os.environ.get('MONGO'))
+
+- now choose db
+
+$ message_db = mongo_client['messages_db']
+
+- now choose collection
+$ messages_collection = messages_db['messages_collection']
+
+- now use .find(), .delete(), .update(), .insert_one() with collection var
+
+$ messages_collection.insert_one(message)
+$ messages_collection.find({'username': f'{username}')
+
+-disaconnect from db
+
+$ mongo_client.close()
+
+
+## AJAX WITH JQUERY
+
+- Download the Jquery file and serve it as static file in the HTML file
+
+now here's an example for a POST requst with csrf_token included in Jquery Ajax:
+
+'''
+ $(document).ready(function() {
+      $("#btn").click(function() {
+        $.ajax({
+          url: '/ajax/{{username}}',
+          type: 'POST',
+          data: {
+            'message': $('#message').val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function(data) {
+            let input = $('#message')
+            let div = $('#messages_div')
+            div.append(`${input.val()} <br> <br>`)
+            input.val('')
+
+          }
+        })
+      })
+    }
+'''
+
+Explanation how ajax, jquery and django work together:
+- So basically The one in charge of the POST request and updating data will be the 
+  JQUERY ajax function, we give it URL that serves data either as HTML or JSON (in this case /ajax/username),
+  then we specify the type of request, this time POST. Then we specified the data that we send to the POST request,
+  in this case message and csrf token. Finally what to do if success (in this case append new message to other messages)
+
+!!- Remember that we append message but this dont save message in db. POST request url does that. Then everytime we reload we get messages from db
+
+Here is also url that serves JSON data:
+
+'''
+from django.http import JsonResponse
+def get_json_message(request, username):
+    if request.method == 'POST':
+        message_form = AjaxMessage(request.POST)
+        if message_form.is_valid():
+            message = message_form.cleaned_data['message']
+            save_message(username, message)
+
+    messages = message_view(username)
+    return JsonResponse(messages)
+
+'''
+
+## COOKIES
+
+# CREATE COKIE:
+
+- We save the response in a var and then use set_cookie method:
+
+'''
+  response = HttpResponse(template.render(context, request))
+
+    if username != 'null' and request.method == 'POST':
+        response.set_cookie('user_name', username, max_age=1*24*60*60)
+
+    return response
+'''
+
+!!!- To set time use  formula - #OFDAYS*24*60*60
+
+
+# GET COOKIE- 
+
+- Use request.COOKIES.get() method to get the desired cookie
+
+Ex:
+
+$ username = request.COOKIES.get('user_name')
+
+
+## RESTful API:
+
+$ pip install djangorestframework django-cors-headers
+
+# CONFG:
+
+INSTALLED_APPS = [
+    # ...
+    # 👇 Add here your installed app's
+    'rest_framework',
+    'corsheaders',
+    'myapi',
+]
+
+MIDDLEWARE = [
+    # ...
+    # 👇 Add this line here
+    'corsheaders.middleware.CorsMiddleware',
+    # Add above line just before this line 👇
+    'django.middleware.common.CommonMiddleware',
+]
+
+# 👇 Add this line here
+CORS_ORIGIN_ALLOW_ALL = True
+
+## VIEWS:
+for view import:
+
+$ from rest_framework.decorators import api_view # for decorators
+$ from rest_framework.response import Response

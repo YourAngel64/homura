@@ -1,0 +1,64 @@
+login:
+
+mysql -u Enten -p
+
+-QUICK DEAL:
+SELECT
+UPDATE
+DELETE
+INSERT INTO ... VALUES ...
+CREATE DATABASE
+ALTER DATABASE
+CREATE TABLE
+ALTER TABLE
+DROP TABLE
+CREATE INDEX
+DROP INDEX  
+SHOW DATABASES
+USE
+DESCRIBE
+
+-tables:
+
+CREATE TABLE name(
+  coloumn1 datatype constrait...
+);
+
+ALTER TABLE...
+ADD
+DROP
+RENAME .. TO ..
+ALTER COLOUMN coloumn_name new_datatype
+
+-constraits:
+NOT NULL
+UNIQUE
+PRIMARY/FOREIGN KEY
+CHECK
+DEFAULT
+
+-primary key:
+PRIMARY KEY (not null data)
+
+-foreig key:
+FOREIGN KEY () REFERENCES __
+
+-index:
+CREATE INDEX name
+ON table_name(datas)
+
+-auto increment/identity:
+AUTO_INCREMENT
+IDENTITY(start, incAmount)
+
+-dates:
+DATE y-m-d
+DATETIME y-m-d h:m:s
+TIMESTAMP same as previous
+YEAR yyyy || yy
+
+-views:
+CREATE (OR REPLACE) VIEW __ AS
+SELECT __
+FROM __
+WHERE __
