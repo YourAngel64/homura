@@ -1,0 +1,53 @@
+spotify
+nvim + lazyvim
+firefox
+neofetch
+htop
+ranger
+cmatrix
+tty-clock
+discord
+ani-cli
+dolphin
+pipes.sh
+zsh
+cava (audio thing)
+kitty (terminal), icat (img), kitten (plugins, themes, etc)
+pavucontrol
+obs-studio-browser, with virtual camera to share screen in discord
+neocat for neofetch themes
+rainfall - terminal rain
+tmux - opening apps without closing terminal
+lsof - see routers in use
+piptube - see videos in youtube in mpv format (use yt-dlp instead of out-dated youtube-dl)
+vimium - extension for making browsers vim like
+armcord - discord client for linux
+noto-fonts-cjk & noto-fonts - fonts for computer
+ibus - keyboard changing language
+steam - :3
+bluez, bluez-utils - bluetooth shit
+wine, proton - for windows games and app running
+lutris - game manager (PEAK)
+mysql, mariadb, postgresql
+popsicle - burn usb drive
+isomaster - change iso files
+balena-etcher
+woe-usb WINDOWS USB BURNER
+snapd - store to download other shit
+pycharm-community edition (snapd)
+mesa - OpenGL libraries for developing opengl apps
+glfw - another for opengl
+glad - ANOTHER LIB FOR OPENGL
+nginx-mainline - nginx for linux
+gunicorn - wsgi server
+
+
+ffmpeg -i example.mkv -c copy example.mp4
+
+chmod +x <scriptname.sh> -to give script p
+sudo lsof -i -P -n | grep LISTEN
+
+cheatsheet is located at:
+.config/ags/modules/cheatsheet
+/etc/locale.gen - keyboard support
+/.steam/steamapp/comppdata

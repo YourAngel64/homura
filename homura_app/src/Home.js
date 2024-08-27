@@ -101,7 +101,7 @@ const Home = () => {
   return (
     <>
       {/* 1st part - User info from user backend */}
-      <h1>TODO: <br /> -Add multiple users <br /> -Ajax or sum to update screen automaticaly</h1>
+      <h1>TODO: <br /> -Add websockets to BE and FE. <br /> -config websocket to update and send messages</h1>
       <br />
       <p>{username}</p>
       <br />

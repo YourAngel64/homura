@@ -69,7 +69,7 @@ const Chat = () => {
     )
   }
 
-  //get messages
+  //get messages once
   useEffect(() => {
     if (chat_id) {
       const get_messages = async () => {
@@ -112,6 +112,7 @@ const Chat = () => {
     })
   }
 
+
   //Add User to chat
   const addUser = (e) => {
 
@@ -127,6 +128,10 @@ const Chat = () => {
 
     add_user()
   }
+
+  //TODO-Update everytime message is sent to db
+  //We can do this by making a request to the server every 2 seconds to check for new messages
+  //Or probably is time to learn about websockets...?
 
   return (
     <>
