@@ -8,6 +8,9 @@ from . import forms
 # Models:
 from .models import UserModel
 
+@api_view(['GET'])
+def prueba(request):
+    return Response({'message': 'prueba'})
 
 @api_view(['POST', 'GET'])
 def getUser(request):

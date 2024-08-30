@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { getCookie } from "./cookie"
 import { userPost, userGet } from "./user.js"
 import get_CSRFToken from "./csrf_token.js"
@@ -13,6 +13,9 @@ const Chat = () => {
   const [message_array, setMessageArray] = useState('')
   const [add_user, setAddUser] = useState('')
 
+  const socket = useRef(null)
+  const [updateMessage, setUpdateMessage] = useState('')
+
   //get cookie (chat id)
   useEffect(() => {
     const get_cookie = async () => {
@@ -25,6 +28,55 @@ const Chat = () => {
     get_cookie()
   }, [])
 
+  //WS CODE START
+
+  useEffect(() =>{
+    if(chat_id != null && !socket.current){
+      const chat_id = "ola"
+      socket.current = new WebSocket(`ws://localhost:8001/ws/get/${chat_id}/`)
+      socket.current.onopen = () =>{
+        console.log("websocket connection successful!")
+      }
+
+      socket.current.onerror = (event) =>{
+        console.log(`error : ${event}`)
+        console.log(event)
+      }
+
+      socket.current.onclose = (event) =>{
+        console.log('connection closed')
+      }
+    }
+
+    
+
+  }, [chat_id])
+
+  useEffect(() => {
+    if(socket.current){
+      socket.current.onmessage = (event) =>{
+
+        console.log("message recieved", event.data)
+
+        const eventData = JSON.parse(event.data)
+
+        if(eventData.message === "successful"){
+          setUpdateMessage((prevState) => !prevState)
+        }
+
+      }
+    }
+
+    return () =>{
+      if(socket.current){
+        socket.current.onmessage = null;
+      }
+    };
+
+  }, [socket])
+
+
+  //WS CODE END
 
   //go back home if cookie is not found
   const GoHome = () => {
@@ -96,6 +148,7 @@ const Chat = () => {
     }
 
     post_message()
+    socket.current.send({"message": "hi"})
   }
 
   //Render render messages
