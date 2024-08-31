@@ -8,7 +8,7 @@ const Chat = () => {
   const [chat_id, setChatID] = useState('')
   const [csrf_token, setCSRFToken] = useState('')
   const [message, setMessage] = useState('')
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState()
   const [chat_name, setChatName] = useState('')
   const [message_array, setMessageArray] = useState('')
   const [add_user, setAddUser] = useState('')
@@ -16,7 +16,7 @@ const Chat = () => {
   const socket = useRef(null)
   const [updateMessage, setUpdateMessage] = useState('')
 
-
+  const [usernameFound, setUsernameFound] = useState(false)
   const [newMessages, setNewMessages] = useState([]);
 
   //get cookie (chat id)
@@ -24,6 +24,7 @@ const Chat = () => {
     const get_cookie = async () => {
       const results = await getCookie('chat_id')
       const username = await getCookie('username')
+      setUsernameFound(true) 
       setChatID(results.chat_id)
       setUsername(username.username)
     }
@@ -34,9 +35,8 @@ const Chat = () => {
   //WS CODE START
 
   useEffect(() =>{
-    if(chat_id != null && !socket.current){
-      const chat_id = "Tengoku-Enten-730o"
-      socket.current = new WebSocket(`ws://localhost:8001/ws/get/${chat_id}/`)
+    if(chat_id != null && !socket.current && usernameFound){
+      socket.current = new WebSocket(`ws://localhost:8001/ws/get/${chat_id}/${username}/`)
       socket.current.onopen = () =>{
         console.log("websocket connection successful!")
       }
@@ -52,19 +52,23 @@ const Chat = () => {
 
     
 
-  }, [chat_id])
+  }, [chat_id, username, chat_id])
 
   useEffect(() => {
     if(socket.current){
-      socket.current.onmessage = (event) =>{
+      socket.current.onmessage = async (event) =>{
 
         console.log("message recieved")
 
-        const eventData = JSON.parse(event.data)
+        const eventData = await JSON.parse(event.data)
         console.log(eventData.message)
-        if(eventData.message === "successful"){
-          setUpdateMessage((prevState) => !prevState)
+        console.log(`username: ${username}, usernamedata: ${eventData.username}`)
+        if(eventData.username != username){
+          setNewMessages((prevMessages) => [...prevMessages, <> <p>{eventData.username}: {eventData.message}</p> <br></br> </> ])
         }
+        /*if(eventData.message === "successful"){
+          setUpdateMessage((prevState) => !prevState)
+        }*/
 
       }
     }
@@ -75,7 +79,7 @@ const Chat = () => {
       }
     };
 
-  }, [socket])
+  }, [socket, username])
 
   const SocketButton = () =>{
       const socketMessage = () =>{
@@ -137,7 +141,7 @@ const Chat = () => {
 
   //get messages once
   useEffect(() => {
-    if (chat_id) {
+    if (chat_id && !message_array) {
       const get_messages = async () => {
         const results = await userGet(`http://localhost:8000/message/get/${chat_id}`, csrf_token)
         setMessageArray(results.messages)
@@ -217,7 +221,7 @@ const Chat = () => {
       <br />
       <div>
         <form onSubmit={postMessage}>
-          <input type='text' placeholder="Message" value={message} onChange={(e) => { setMessage(e.target.value) }}></input>
+          <input type='text' placeholder="Message" value={message} onChange={(e) => { setMessage(e.target.value);}}></input>
           <button type="submit">Send message</button>
         </form>
       </div>
