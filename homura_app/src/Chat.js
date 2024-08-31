@@ -16,6 +16,9 @@ const Chat = () => {
   const socket = useRef(null)
   const [updateMessage, setUpdateMessage] = useState('')
 
+
+  const [newMessages, setNewMessages] = useState([]);
+
   //get cookie (chat id)
   useEffect(() => {
     const get_cookie = async () => {
@@ -32,14 +35,13 @@ const Chat = () => {
 
   useEffect(() =>{
     if(chat_id != null && !socket.current){
-      const chat_id = "ola"
+      const chat_id = "Tengoku-Enten-730o"
       socket.current = new WebSocket(`ws://localhost:8001/ws/get/${chat_id}/`)
       socket.current.onopen = () =>{
         console.log("websocket connection successful!")
       }
 
       socket.current.onerror = (event) =>{
-        console.log(`error : ${event}`)
         console.log(event)
       }
 
@@ -56,10 +58,10 @@ const Chat = () => {
     if(socket.current){
       socket.current.onmessage = (event) =>{
 
-        console.log("message recieved", event.data)
+        console.log("message recieved")
 
         const eventData = JSON.parse(event.data)
-
+        console.log(eventData.message)
         if(eventData.message === "successful"){
           setUpdateMessage((prevState) => !prevState)
         }
@@ -75,6 +77,15 @@ const Chat = () => {
 
   }, [socket])
 
+  const SocketButton = () =>{
+      const socketMessage = () =>{
+        socket.current.send('buenas')
+      }
+
+      return(
+        <button onClick={socketMessage}>socket button</button>
+      )
+  }
 
   //WS CODE END
 
@@ -114,6 +125,9 @@ const Chat = () => {
 
     const onClick = () => {
       navigate('/')
+
+      //close socket connection whenever user gets out of the chat
+      socket.current.close();
     }
 
     return (
@@ -144,11 +158,15 @@ const Chat = () => {
         'message': message,
       }
       const results = await userPost(`http://localhost:8000/message/post/${chat_id}`, data, csrf_token, e)
+
+      //render new messages to newMessages array
+      setNewMessages((prevMessages) => [...prevMessages, <> <p>{username}: {message}</p> <br></br> </> ])
+
       setMessage('')
     }
 
     post_message()
-    socket.current.send({"message": "hi"})
+    
   }
 
   //Render render messages
@@ -194,6 +212,7 @@ const Chat = () => {
       <br />
 
       <RenderMessages></RenderMessages>
+      <p>{newMessages}</p>
 
       <br />
       <div>
@@ -213,6 +232,8 @@ const Chat = () => {
 
       <input type='text' placeholder="User to add username" value={add_user} onChange={(e) => { setAddUser(e.target.value) }}></input>
       <button onClick={addUser}>Add User</button>
+      <br></br>
+      <SocketButton></SocketButton>
 
     </>
   )
