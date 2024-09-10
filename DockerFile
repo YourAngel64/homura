@@ -1,0 +1,19 @@
+FROM python:3.12-slim
+
+WORKDIR /homura/backend
+
+COPY requirements.txt requirements.txt
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY /homura_server .
+
+FROM node
+
+WORKDIR /webhome/frontend
+
+COPY homura_app/package*.json ./
+
+RUN npm install
+
+COPY /homura_app .
